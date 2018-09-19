@@ -462,7 +462,7 @@ class wc2_oef2:
     @staticmethod
     def t_deel2(b):
         print('Tip:')
-        print('S2 = s_x**2 + s_y**2 + s_z**2')
+        print('S^2 = s_x**2 + s_y**2 + s_z**2')
 
     @staticmethod
     def t_deel3(b):
@@ -504,14 +504,15 @@ class wc2_oef2:
         v = v / np.abs(v)
         # eerste eigenvector alfa=beta en tweede eigenvector alfa=-beta
         v1 = v[:, 0]
-        print(v1)
+        print('kolomvector 1: ', v1)
         v2 = v[:, 1]
-        print(v2)
+        print('kolomvector 2: ', v2)
 
     @staticmethod
     def t_deel5(b):
         print('Tip:')
-        print('')
+        print('[[<v1|v1>, <v1|v2>],\n [<v2|v1>, <v2|v2>]]')
+        print('Waarbij v1 de eerste eigenvector is en v2 de tweede.')
 
     @staticmethod
     def a_deel5(b):
@@ -532,7 +533,7 @@ class wc2_oef2:
 
 #class wc3_oef1:
 
-    
+
 
 
 
