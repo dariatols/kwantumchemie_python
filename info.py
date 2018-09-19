@@ -1,9 +1,9 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy.integrate import simps
-from scipy.integrate import quad
+from scipy.integrate import simps, quad
+from scipy.constants import hbar
 
-class wc1_oef1():
+class wc1_oef1:
     @staticmethod
     def t_deel1(b):
         print('Tip:')
@@ -54,7 +54,7 @@ class wc1_oef1():
         ax.legend()
         fig.show()
 
-class wc1_oef2():
+class wc1_oef2:
 
     @staticmethod
     def t_deel1(b):
@@ -146,7 +146,7 @@ class wc1_oef2():
         ax.legend()
         fig.show()
 
-class wc1_oef3():
+class wc1_oef3:
 
     @staticmethod
     def t_deel1(b):
@@ -269,7 +269,7 @@ class wc2_oef1:
 
             return np.sin(V)
 
-        print( pot_operator(x) )
+        print('V \n', pot_operator(x))
 
     @staticmethod
     def t_deel3(b):
@@ -307,7 +307,7 @@ class wc2_oef1:
 
             return T
 
-        print( kin_operator(x) )
+        print('T \n', kin_operator(x))
 
     @staticmethod
     def t_deel4(b):
@@ -330,8 +330,6 @@ class wc2_oef1:
 
             return np.sin(V)
 
-        print( pot_operator(x) )
-
         def kin_operator(x, m=1, hbar=1):
 
             n = x.size
@@ -353,8 +351,9 @@ class wc2_oef1:
                     T[i][i + 1] = a
 
             return T
+
         H = kin_operator(x) + pot_operator(x)
-        print(H)
+        print('H = \n', H)
 
     @staticmethod
     def t_deel5(b):
@@ -381,8 +380,6 @@ class wc2_oef1:
                 V[i][i] = x[i]
 
             return np.sin(V)
-
-        print( pot_operator(x) )
 
         def kin_operator(x, m=1, hbar=1):
 
@@ -432,6 +429,112 @@ class wc2_oef1:
 
         ax.legend()
         fig.show()
+
+class wc2_oef2:
+
+    @staticmethod
+    def t_deel1(b):
+        print('Tip:')
+        print('Stel Sx, Sy en Sz op. Dit zijn NumPy-arrays waardoor het makkelijk',
+              'wordt om hun commutator uit te rekenen. Indien ze commuteren, moet hun',
+              'commutator gelijk zijn aan de nulmatrix. Gebruik hiervoor np.allclose(...).',
+              'Gebruik ook scipy.constants.hbar.')
+
+    @staticmethod
+    def a_deel1(b):
+        print('Antwoord:')
+        s_x = np.array([[0, 1], [1, 0]])
+        s_y = np.array([[0, -1j], [1j, 0]])
+        s_z = np.array([[1, 0], [0, -1]])
+
+        def commutator(A, B):
+            return np.allclose(A @ B - B @ A, np.zeros((2, 2)))
+
+        comm = commutator(s_x, s_y)
+        print('Commuteren S_x en S_y? {}'.format(comm))
+
+        comm = commutator(s_x, s_z)
+        print('Commuteren S_x en S_z? {}'.format(comm))
+
+        comm = commutator(s_y, s_z)
+        print('Commuteren S_y en S_z? {}'.format(comm))
+
+    @staticmethod
+    def t_deel2(b):
+        print('Tip:')
+        print('S2 = s_x**2 + s_y**2 + s_z**2')
+
+    @staticmethod
+    def t_deel3(b):
+        print('Tip:')
+        print('<alfa|S^2|alfa> waarbij <alfa| gevormd wordt door',
+              'het transponeren van de alfa-kolomvector.')
+
+    @staticmethod
+    def a_deel3(b):
+        print('Antwoord:')
+
+        alfa, beta = np.array([[1.], [0.]]), np.array([[0.], [1.]])
+        ct = 0.5 * hbar
+        s_x = np.array([[0, 1], [1, 0]])
+        s_y = np.array([[0, -1j], [1j, 0]])
+        s_z = np.array([[1, 0], [0, -1]])
+
+        def commutator(A, B):
+            return np.allclose(A @ B - B @ A, np.zeros((2, 2)))
+
+        S2 = s_x ** 2 + s_y ** 2 + s_z ** 2
+        verw_S2 = np.transpose(alfa) @ S2 @ alfa
+        print('De verwachtingswaarde van S2 is 0.5*hbar*{}'.format(float(verw_S2[0][0])))
+
+    @staticmethod
+    def t_deel4(b):
+        print('Tip:')
+        print('Diagonaliseer Sx met np.linalg.eig(...). Normaliseer deze kolomvectoren.')
+
+    @staticmethod
+    def a_deel4(b):
+        print('Antwoord:')
+
+        s_x = np.array([[0, 1], [1, 0]])
+        w, v = np.linalg.eig(s_x)
+
+        # constante maakt in principe weinig uit, nog orthonormalisatie
+        # elke kolom is een eigenvector
+        v = v / np.abs(v)
+        # eerste eigenvector alfa=beta en tweede eigenvector alfa=-beta
+        v1 = v[:, 0]
+        print(v1)
+        v2 = v[:, 1]
+        print(v2)
+
+    @staticmethod
+    def t_deel5(b):
+        print('Tip:')
+        print('')
+
+    @staticmethod
+    def a_deel5(b):
+        print('Antwoord:')
+
+        s_x = np.array([[0, 1], [1, 0]])
+        s_z = np.array([[1, 0], [0, -1]])
+        w, v = np.linalg.eig(s_x)
+
+        v = v / np.abs(v)
+        v1 = v[:, 0]
+        v2 = v[:, 1]
+
+        s_z2 = [[np.transpose(v1) @ v1, np.transpose(v1) @ v2], \
+                [np.transpose(v2) @ v1, np.transpose(v2) @ v2]] * s_z
+
+        print(s_z2)
+
+#class wc3_oef1:
+
+    
+
+
 
 
 
