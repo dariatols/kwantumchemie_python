@@ -56,31 +56,31 @@ class wc1_oef1():
 class wc1_oef2():
 
     @staticmethod
-    def t_deel1():
+    def t_deel1(b):
         print('Tip:')
         print('Deze deelvraag is eigenlijk hetzelfde als in oefening 1.',
               ' Gebruik np.sin(...) om deze vraag op te lossen.')
 
     @staticmethod
-    def a_deel1():
+    def a_deel1(b):
         print('Antwoord:')
         print('np.sin( (n * np.pi * x) / a )')
 
     @staticmethod
-    def t_deel2():
+    def t_deel2(b):
         print('Tip:')
         print('Gebruik de functie uit de vorige deelvraag om de 4 eigenfuncties',
               'terug te geven met n=0, n=1, n=2, n=3. Hierna sommeer je deze.')
 
     @staticmethod
-    def t_deel3():
+    def t_deel3(b):
         print('Tip:')
         print('Gebruik vergelijking 1.9 om de probabiliteitsdensiteit te schrijven.',
               'Hierna gebruik je scipy.integrate.simps om te integreren.',
               'Vergeet niet de vierkantswortel te nemen van de bekomen integraal.')
 
     @staticmethod
-    def a_deel3():
+    def a_deel3(b):
         print('Antwoord:')
         x = np.linspace(0, 10, 1000)
         a = 10
@@ -103,14 +103,14 @@ class wc1_oef2():
         print(norm(psi_x))
 
     @staticmethod
-    def t_deel4():
+    def t_deel4(b):
         print('Tip:')
         print('Bereken hiervoor de norm van psi en deel de golffunctie',
               'psi door de berekende norm. Sla deze genormaliseerde',
               'golffunctie op in een nieuwe variabele.')
 
     @staticmethod
-    def a_deel4():
+    def a_deel4(bg):
         print('Antwoord:')
         x = np.linspace(0, 10, 1000)
         a = 10
@@ -144,5 +144,3 @@ class wc1_oef2():
 
         ax.legend()
         fig.show()
-
-wc1_oef1.t_deel1()
