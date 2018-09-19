@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 
 class Info():
     @staticmethod
-    def twc01oef01deel1():
+    def twc01oef01deel1(b):
         print('Maak een functie die enkel het sinusgedeelte',
               'van de golfvergelijking teruggeeft. Hierbij maak je gebruik',
               'van numpy.sin() en numpy.pi.')
