@@ -92,7 +92,7 @@ class wc1_oef2():
         def golffunctie():
             psi_x = np.zeros(1000)
             for n in range(5):
-                psi_x += eigenfunctie(x, l, n)
+                psi_x += eigenfunctie(x, a, n)
             return psi_x
 
         def norm(psi):
