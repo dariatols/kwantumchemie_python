@@ -232,3 +232,210 @@ class wc1_oef3():
 
         onzekerheid = delta_x * delta_p
         print('De onzekerheid bedraagt ', onzekerheid)
+
+class wc2_oef:
+
+    @staticmethod
+    def t_deel1(b):
+        print('Tip:')
+        print('Gebruik np.arange(...) of np.linspace(...).')
+
+    @staticmethod
+    def a_deel1(b):
+        print('Antwoord:')
+        L = 10
+        x = np.linspace(0, L, num=1000)
+        print(x)
+
+    @staticmethod
+    def t_deel2(b):
+        print('Tip:')
+        print('Maak een vierkante matrix van (1000x1000) met np.zeros(...).',
+              'Vul de diagonaal in met sin(x), gebruik np.sin(...).')
+
+    @staticmethod
+    def a_deel2(b):
+        print('Antwoord:')
+
+        L = 10
+        x = np.linspace(0, L, num=1000)
+
+        def pot_operator(x):
+            n = x.size
+            V = np.zeros((n, n))
+
+            for i in range(n):
+                V[i][i] = x[i]
+
+            return np.sin(V)
+
+        print( pot_operator(x) )
+
+    @staticmethod
+    def t_deel3(b):
+        print('Tip:')
+        print('Stel de constante a op. Hiervoor ga je op dezelfde manier',
+              'te werk als in de vorige deelvraag. Enkel worden nu ook de rijen',
+              'boven en onder de diagonaal gevuld.')
+
+    @staticmethod
+    def a_deel3(b):
+        print('Antwoord:')
+
+        L = 10
+        x = np.linspace(0, L, num=1000)
+
+        def kin_operator(x, m=1, hbar=1):
+
+            n = x.size
+
+            delta_x = x[1] - x[0]
+            a = -(hbar ** 2) / (2 * m * delta_x ** 2)
+
+            T = np.zeros((n, n))
+
+            for i in range(n):
+                T[i][i] = -2 * a
+
+                if i == 0:
+                    T[i][i + 1] = a
+                elif i == n - 1:
+                    T[i][i - 1] = a
+                else:
+                    T[i][i - 1] = a
+                    T[i][i + 1] = a
+
+            return T
+
+        print( kin_operator(x) )
+
+    @staticmethod
+    def t_deel4(b):
+        print('Tip:')
+        print('De potentiele en kinetische energiematrices zijn beiden Numpy-',
+              'arrays. Je kunt ze dus zonder problemen optellen d.m.v. +.')
+
+    @staticmethod
+    def a_deel4(b):
+        print('Antwoord:')
+
+        L = 10
+        x = np.linspace(0, L, num=1000)
+        def pot_operator(x):
+            n = x.size
+            V = np.zeros((n, n))
+
+            for i in range(n):
+                V[i][i] = x[i]
+
+            return np.sin(V)
+
+        print( pot_operator(x) )
+
+        def kin_operator(x, m=1, hbar=1):
+
+            n = x.size
+
+            delta_x = x[1] - x[0]
+            a = -(hbar ** 2) / (2 * m * delta_x ** 2)
+
+            T = np.zeros((n, n))
+
+            for i in range(n):
+                T[i][i] = -2 * a
+
+                if i == 0:
+                    T[i][i + 1] = a
+                elif i == n - 1:
+                    T[i][i - 1] = a
+                else:
+                    T[i][i - 1] = a
+                    T[i][i + 1] = a
+
+            return T
+        H = kin_operator(x) + pot_operator(x)
+        print(H)
+
+    @staticmethod
+    def t_deel5(b):
+        print('Tip:')
+        print('Gebruik np.linalg.eigh(...) om de Hamtiltoniaan te diagonaliseren.')
+
+    @staticmethod
+    def t_deel6(b):
+        print('Tip:')
+        print('Gebruik je geschreven normaliseerfuncties van WC2_oef2.',
+              'De grondtoestand is de eerste kolomvector van de eigenvectoren-',
+              'matrix die je terugkrijgt bij np.linalg.eigh(...).')
+
+    @staticmethod
+    def a_deel6(b):
+        print('Antwoord:')
+        L = 10
+        x = np.linspace(0, L, num=1000)
+        def pot_operator(x):
+            n = x.size
+            V = np.zeros((n, n))
+
+            for i in range(n):
+                V[i][i] = x[i]
+
+            return np.sin(V)
+
+        print( pot_operator(x) )
+
+        def kin_operator(x, m=1, hbar=1):
+
+            n = x.size
+
+            delta_x = x[1] - x[0]
+            a = -(hbar ** 2) / (2 * m * delta_x ** 2)
+
+            T = np.zeros((n, n))
+
+            for i in range(n):
+                T[i][i] = -2 * a
+
+                if i == 0:
+                    T[i][i + 1] = a
+                elif i == n - 1:
+                    T[i][i - 1] = a
+                else:
+                    T[i][i - 1] = a
+                    T[i][i + 1] = a
+
+            return T
+        H = kin_operator(x) + pot_operator(x)
+        eigw, eigv = np.linalg.eigh(H)
+
+        def prob_densiteit(psi):
+            return np.conjugate(psi) * psi
+
+        def norm(psi):
+            pd = prob_densiteit(psi)
+            return np.sqrt(simps(pd, x))
+
+        def normaliseer(psi):
+            norm_psi = norm(psi)
+
+            return psi / norm_psi
+
+        psi_0 = normaliseer(eigv[:, 0])
+
+        pd = prob_densiteit(psi_0)
+
+        fig, ax = plt.subplots()
+        ax.axhline(color='k', linewidth=0.5)
+
+        ax.plot(x, psi_0, label='psi_0')
+        ax.plot(x, pd, label='probabiliteit', color='r')
+
+        ax.legend()
+        fig.show()
+
+
+
+
+
+
+
