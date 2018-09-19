@@ -8,7 +8,7 @@ class Knop():
         else:
             self.knop = widgets.Button(description='Antwoord')
 
-        display(self.knop)
+        return self.knop
 
 
     def tip_wc1_oef1(self):
@@ -16,7 +16,3 @@ class Knop():
 
     def antw_wc1_oef1(self):
         print('Dit is het antwoord.')
-
-
-
-knop = Knop('tip')
