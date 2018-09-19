@@ -233,7 +233,7 @@ class wc1_oef3():
         onzekerheid = delta_x * delta_p
         print('De onzekerheid bedraagt ', onzekerheid)
 
-class wc2_oef:
+class wc2_oef1:
 
     @staticmethod
     def t_deel1(b):
