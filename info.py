@@ -2,6 +2,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.integrate import simps, quad
 from scipy.constants import hbar
+from scipy.spatial.distance import cdist
+from sympy.physics.quantum import Ket, Bra, Operator
+from sympy import *
+init_printing(use_unicode=True)
 
 class wc1_oef1:
     @staticmethod
@@ -511,7 +515,7 @@ class wc2_oef2:
     @staticmethod
     def t_deel5(b):
         print('Tip:')
-        print('[[<v1|v1>, <v1|v2>],\n [<v2|v1>, <v2|v2>]]')
+        print('[[<v1|Sz|v1>, <v1|Sz|v2>],\n [<v2|Sz|v1>, <v2|Sz|v2>]]')
         print('Waarbij v1 de eerste eigenvector is en v2 de tweede.')
 
     @staticmethod
@@ -531,8 +535,62 @@ class wc2_oef2:
 
         print(s_z2)
 
-#class wc3_oef1:
+class wc3_oef1:
 
+    @staticmethod
+    def t_deel1(b):
+        print('Tip:')
+        print('Gebruik SymPy om de variationele integraal W op te stellen.',
+              'Maak eerst de nodige symbolen aan, waarna je de integraal opstelt.',
+              'Gebruik sympy.subs om de integraal te vereenvoudigen met de notaties ',
+              'Haa, Hbb, Hab, Saa, Sbb, Sab.')
+
+    @staticmethod
+    def a_deel1(b):
+        print('Antwoord:')
+        H = Operator('\hat{H}')
+        one = Operator('\hat{1}')
+        ca, cb = symbols('c_A c_B')
+        phi_a, phi_b = symbols('\phi_A \phi_B', constant=True)
+        HAA, HBB, HAB, S = symbols('H_{AA} H_{BB} H_{AB} S')
+
+        W = ((ca * Bra(phi_a) + cb * Bra(phi_b)) * H * \
+             (ca * Ket(phi_a) + cb * Ket(phi_b))) / \
+            ((ca * Bra(phi_a) + cb * Bra(phi_b)) * one * \
+             (ca * Ket(phi_a) + cb * Ket(phi_b)))
+
+        W = expand(W)
+
+        W = W.subs(Bra(phi_a) * H * Ket(phi_a), HAA) \
+            .subs(Bra(phi_a) * H * Ket(phi_b), HAB) \
+            .subs(Bra(phi_b) * H * Ket(phi_a), HAB) \
+            .subs(Bra(phi_b) * H * Ket(phi_b), HBB) \
+            .subs(Bra(phi_a) * one * Ket(phi_a), 1) \
+            .subs(Bra(phi_a) * one * Ket(phi_b), S) \
+            .subs(Bra(phi_b) * one * Ket(phi_a), S) \
+            .subs(Bra(phi_b) * one * Ket(phi_b), 1)
+
+        W = simplify(W)
+
+        return(W)
+
+    @staticmethod
+    def t_deel2(b):
+        print('Tip:')
+        print('')
+
+    @staticmethod
+    def a_deel2(b):
+        print('Antwoord:')
+
+    @staticmethod
+    def t_deel3(b):
+        print('Tip:')
+        print('')
+
+    @staticmethod
+    def a_deel3(b):
+        print('Antwoord:')
 
 
 
