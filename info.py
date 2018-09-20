@@ -6,6 +6,9 @@ from scipy.spatial.distance import cdist
 from sympy.physics.quantum import Ket, Bra, Operator
 from sympy import *
 init_printing(use_unicode=True)
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 
 class wc1_oef1:
     @staticmethod
@@ -571,31 +574,191 @@ class wc3_oef1:
             .subs(Bra(phi_b) * one * Ket(phi_b), 1)
 
         W = simplify(W)
-
-        print(latex(W))
+        pprint(W)
 
     @staticmethod
     def t_deel2(b):
         print('Tip:')
-        print('')
+        print('Leid W eens af naar c_A en eens naar c_B en stel beide afgeleiden ',
+              '= 0. Zet beide vergelijkingen om in matrixvorm met sympy.linear_eq_to_matrix(...)',
+              'en los het eigenwaardeprobleem op met sympy.solve(...). Vergeet niet dat Haa en ',
+              'Hbb hetzelfde zijn, substitueer Hbb dus door Haa.')
 
     @staticmethod
     def a_deel2(b):
         print('Antwoord:')
+        H = Operator('\hat{H}')
+        one = Operator('\hat{1}')
+        ca, cb = symbols('c_A c_B')
+        phi_a, phi_b = symbols('\phi_A \phi_B', constant=True)
+        HAA, HBB, HAB, S = symbols('H_{AA} H_{BB} H_{AB} S')
+
+        W = ((ca * Bra(phi_a) + cb * Bra(phi_b)) * H * \
+             (ca * Ket(phi_a) + cb * Ket(phi_b))) / \
+            ((ca * Bra(phi_a) + cb * Bra(phi_b)) * one * \
+             (ca * Ket(phi_a) + cb * Ket(phi_b)))
+
+        W = expand(W)
+
+        W = W.subs(Bra(phi_a) * H * Ket(phi_a), HAA) \
+            .subs(Bra(phi_a) * H * Ket(phi_b), HAB) \
+            .subs(Bra(phi_b) * H * Ket(phi_a), HAB) \
+            .subs(Bra(phi_b) * H * Ket(phi_b), HBB) \
+            .subs(Bra(phi_a) * one * Ket(phi_a), 1) \
+            .subs(Bra(phi_a) * one * Ket(phi_b), S) \
+            .subs(Bra(phi_b) * one * Ket(phi_a), S) \
+            .subs(Bra(phi_b) * one * Ket(phi_b), 1)
+
+        W = simplify(W)
+
+        dca = diff(W, ca)
+        dcb = diff(W, cb)
+
+        E = Symbol('E')
+        dca = simplify(dca.subs(W, E))
+        dcb = simplify(dcb.subs(W, E))
+
+        t_dca, _ = fraction(dca)
+        t_dcb, _ = fraction(dcb)
+
+        A, b = linear_eq_to_matrix((expand(t_dca), expand(t_dcb)), ca, cb)
+        # A, b = linear_eq_to_matrix((t_dca, t_dcb), ca, cb)
+        A = A.subs(HBB, HAA)
+
+        E1, E2 = solve(A.det(), E)
+
+        print('E1: ')
+        pprint(E1)
+        print('E2: ')
+        pprint(E2)
 
     @staticmethod
     def t_deel3(b):
         print('Tip:')
-        print('')
+        print('Maak hier weer gebruik van sympy.solve(...) om de coefficienten ',
+              'te berekenen.')
 
     @staticmethod
     def a_deel3(b):
         print('Antwoord:')
+        H = Operator('\hat{H}')
+        one = Operator('\hat{1}')
+        ca, cb = symbols('c_A c_B')
+        phi_a, phi_b = symbols('\phi_A \phi_B', constant=True)
+        HAA, HBB, HAB, S = symbols('H_{AA} H_{BB} H_{AB} S')
 
+        W = ((ca * Bra(phi_a) + cb * Bra(phi_b)) * H * \
+             (ca * Ket(phi_a) + cb * Ket(phi_b))) / \
+            ((ca * Bra(phi_a) + cb * Bra(phi_b)) * one * \
+             (ca * Ket(phi_a) + cb * Ket(phi_b)))
 
+        W = expand(W)
 
+        W = W.subs(Bra(phi_a) * H * Ket(phi_a), HAA) \
+            .subs(Bra(phi_a) * H * Ket(phi_b), HAB) \
+            .subs(Bra(phi_b) * H * Ket(phi_a), HAB) \
+            .subs(Bra(phi_b) * H * Ket(phi_b), HBB) \
+            .subs(Bra(phi_a) * one * Ket(phi_a), 1) \
+            .subs(Bra(phi_a) * one * Ket(phi_b), S) \
+            .subs(Bra(phi_b) * one * Ket(phi_a), S) \
+            .subs(Bra(phi_b) * one * Ket(phi_b), 1)
 
+        W = simplify(W)
 
+        dca = diff(W, ca)
+        dcb = diff(W, cb)
+
+        E = Symbol('E')
+        dca = simplify(dca.subs(W, E))
+        dcb = simplify(dcb.subs(W, E))
+
+        t_dca, _ = fraction(dca)
+        t_dcb, _ = fraction(dcb)
+
+        A, b = linear_eq_to_matrix((expand(t_dca), expand(t_dcb)), ca, cb)
+        # A, b = linear_eq_to_matrix((t_dca, t_dcb), ca, cb)
+        A = A.subs(HBB, HAA)
+
+        E1, E2 = solve(A.det(), E)
+
+        x = Matrix([ca, cb])
+        b = (A * x).subs(E, E1)
+        c1 = solve(b, ca, cb)  # dictionary
+
+        b = (A * x).subs(E, E2)
+        c2 = solve(b, ca, cb)  # dictionary
+
+        _, N = fraction(W)
+
+        # c1: ca = -cb
+        a = N.subs(ca, c1[ca])
+        cb1 = solve(a - 1, cb)
+
+        # c2: ca = cb
+        a = N.subs(ca, c2[ca])
+        cb2 = solve(a - 1, cb)
+
+        print('Mogelijke c_b coefficienten horende bij E1 (c_a=-c_b: ')
+        pprint(cb1)
+        print('Mogelijke c_b coefficienten horende bij E2 (c_a=c_b): ')
+        pprint(cb2)
+
+    @staticmethod
+    def t_deel4(b):
+        print('Tip:')
+        print('Gebruik dezelfde variationele integraal W als in deelvraag 1. ',
+              'Maak een meshgrid met np.meshgrid(...). Maak een functie '
+              'die de waarde W berekent op elk punt in het 2D-grid.')
+
+    @staticmethod
+    def a_deel4(b):
+        print('Antwoord:')
+        H = Operator('\hat{H}')
+        one = Operator('\hat{1}')
+        ca, cb = symbols('c_A c_B')
+        phi_a, phi_b = symbols('\phi_A \phi_B', constant=True)
+        HAA, HBB, HAB, S = symbols('H_{AA} H_{BB} H_{AB} S')
+
+        W = ((ca * Bra(phi_a) + cb * Bra(phi_b)) * H * \
+             (ca * Ket(phi_a) + cb * Ket(phi_b))) / \
+            ((ca * Bra(phi_a) + cb * Bra(phi_b)) * one * \
+             (ca * Ket(phi_a) + cb * Ket(phi_b)))
+
+        W = expand(W)
+
+        W = W.subs(Bra(phi_a) * H * Ket(phi_a), HAA) \
+            .subs(Bra(phi_a) * H * Ket(phi_b), HAB) \
+            .subs(Bra(phi_b) * H * Ket(phi_a), HAB) \
+            .subs(Bra(phi_b) * H * Ket(phi_b), HBB) \
+            .subs(Bra(phi_a) * one * Ket(phi_a), 1) \
+            .subs(Bra(phi_a) * one * Ket(phi_b), S) \
+            .subs(Bra(phi_b) * one * Ket(phi_a), S) \
+            .subs(Bra(phi_b) * one * Ket(phi_b), 1)
+
+        W = simplify(W)
+
+        # W.evalf( subs={HAA: 1, HBB: 1, S: .5, ca: 3, cb: 6} )
+        a, b = np.linspace(-1, 1, 1000), np.linspace(-1, 1, 1000)
+        aa, bb = np.meshgrid(a, b)
+
+        f = lambdify((HAA, HBB, HAB, S, ca, cb), W)
+        grid = f(1, 1, -2, .5, aa, bb)
+
+        coeff = np.where(grid == np.amin(grid))
+
+        i = (coeff[0][0], coeff[1][0])
+
+        print('c_a = ', a[i[0]])
+        print('c_b = ', b[i[1]])
+        print('De coefficienten horende bij de laagste energie zijn dus hetzelfde ',
+              'en hebben hetzelfde teken. Deze waarnemingen kloppen met de theoretische ',
+              'afleiding uit vraag 3.')
+
+        fig = plt.figure()
+        ax = fig.gca(projection='3d')
+
+        ax.plot_surface(aa, bb, grid, cmap=cm.coolwarm)
+        fig.show()
 
 
 
