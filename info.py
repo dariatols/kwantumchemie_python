@@ -9,6 +9,8 @@ init_printing(use_unicode=True)
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
+import sympy as sp
+from matplotlib import cm
 
 class wc1_oef1:
     @staticmethod
@@ -760,7 +762,172 @@ class wc3_oef1:
         ax.plot_surface(aa, bb, grid, cmap=cm.coolwarm)
         fig.show()
 
+class wc3_oef2:
 
+    @staticmethod
+    def t_deel1(b):
+        print('Tip:')
+        print('Maak een (6x3) NumPy-array. Het coordinatenbestand bevat ',
+              'alle cijfers als strings. Vergeet deze dus niet om te zetten in floats.')
 
+    @staticmethod
+    def a_deel1(b):
+        print('Antwoord:')
+        coord = []
+        with open('benzene.xyz') as file:
+            for line in file:
+                line = list(map(float, line.rstrip().split()))
+                coord.append(line)
+
+        coord = np.array(coord)
+        print(coord)
+
+    @staticmethod
+    def t_deel2(b):
+        print('Tip:')
+        print('Gebruik scipy.spatial.distance.cdist(...) om de afstanden tussen ',
+              'de verschillende atomen te berekenen. De diagonaalelementen zijn = 0.')
+
+    @staticmethod
+    def a_deel2(b):
+        print('Antwoord:')
+        coord = []
+        with open('benzene.xyz') as file:
+            for line in file:
+                line = list(map(float, line.rstrip().split()))
+                coord.append(line)
+
+        coord = np.array(coord)
+        bindleng = cdist(coord, coord)
+        print(bindleng)
+
+    @staticmethod
+    def t_deel3(b):
+        print('Tip:')
+        print('Maak een (6x6)-matrix met np.zeros(...), vervang de relevante ',
+              'posities door alfa en beta. Alfa en beta zijn SymPy-symbolen.')
+
+    @staticmethod
+    def a_deel3(b):
+        print('Antwoord:')
+        coord = []
+        with open('benzene.xyz') as file:
+            for line in file:
+                line = list(map(float, line.rstrip().split()))
+                coord.append(line)
+
+        coord = np.array(coord)
+        bindleng = cdist(coord, coord)
+
+        huckel = sp.zeros(coord.shape[0])
+
+        a_pos = np.where(bindleng == 0.)
+        b_pos = np.where(np.abs(bindleng - 1.445) < 1.445)
+        # dit omdat een normale bindingslengte tussen C-C 2.91 bohr bedraagt
+
+        al, be = sp.symbols(r'\alpha \beta')
+        print(a_pos)
+
+        for r, k in zip(a_pos[0], a_pos[1]):
+            huckel[r, k] = al
+
+        for r, k in zip(b_pos[0], b_pos[1]):
+            huckel[r, k] = be
+
+        print(huckel)
+
+    @staticmethod
+    def t_deel4(b):
+        print('Tip:')
+        print('Gebruik de methode sp.diagonalize() om de Huckelmatrix ',
+              'te diagonaliseren. Zet de eigenvectoren om naar een NumPy array.')
+
+    @staticmethod
+    def a_deel4(b):
+        print('Antwoord:')
+        coord = []
+        with open('benzene.xyz') as file:
+            for line in file:
+                line = list(map(float, line.rstrip().split()))
+                coord.append(line)
+
+        coord = np.array(coord)
+        bindleng = cdist(coord, coord)
+
+        huckel = sp.zeros(coord.shape[0])
+
+        a_pos = np.where(bindleng == 0.)
+        b_pos = np.where(np.abs(bindleng - 1.445) < 1.445)
+        # dit omdat een normale bindingslengte tussen C-C 2.91 bohr bedraagt
+
+        al, be = sp.symbols(r'\alpha \beta')
+        print(a_pos)
+
+        for r, k in zip(a_pos[0], a_pos[1]):
+            huckel[r, k] = al
+
+        for r, k in zip(b_pos[0], b_pos[1]):
+            huckel[r, k] = be
+
+        v, w = huckel.diagonalize()
+        v = np.array(v)  # .astype(np.float64)
+        print(v)
+
+    @staticmethod
+    def t_deel5(b):
+        print('Tip:')
+        print('Gebruik plt.scatter(...) waar je de x- en y-coordinaten meegeeft. ',
+              'De eigenvectoren worden in functie van x en y geplot.')
+
+    @staticmethod
+    def a_deel5(b):
+        print('Antwoord:')
+        coord = []
+        with open('benzene.xyz') as file:
+            for line in file:
+                line = list(map(float, line.rstrip().split()))
+                coord.append(line)
+
+        coord = np.array(coord)
+        bindleng = cdist(coord, coord)
+
+        huckel = sp.zeros(coord.shape[0])
+
+        a_pos = np.where(bindleng == 0.)
+        b_pos = np.where(np.abs(bindleng - 1.445) < 1.445)
+        # dit omdat een normale bindingslengte tussen C-C 2.91 bohr bedraagt
+
+        al, be = sp.symbols(r'\alpha \beta')
+        print(a_pos)
+
+        for r, k in zip(a_pos[0], a_pos[1]):
+            huckel[r, k] = al
+
+        for r, k in zip(b_pos[0], b_pos[1]):
+            huckel[r, k] = be
+
+        v, w = huckel.diagonalize()
+        v = np.array(v)  # .astype(np.float64)
+
+        x, y = coord[:, 0], coord[:, 1]
+        xx, yy = np.meshgrid(x, y)
+        eigv = np.diag(v[:, 0])
+
+        fig, axes = plt.subplots(3, 2, sharex='col', sharey='row', figsize=(6, 6))
+
+        i = 0
+
+        for lijn in axes:
+            for ax in lijn:
+                ax.scatter(coord[:, 0], coord[:, 1], c=v[:, i], s=250, cmap=cm.coolwarm)
+                # kies zelf welke kleurmap jullie duidelijker vinden
+                # ax.scatter(coord[:,0], coord[:,1], c=v[:,i], s=200, cmap='bwr')
+
+                i += 1
+                ax.set_xlim([-4, 4])
+                ax.set_ylim([-4, 4])
+                ax.set(aspect='equal', adjustable='box-forced')
+
+        fig.show()
 
 
