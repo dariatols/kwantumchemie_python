@@ -572,7 +572,7 @@ class wc3_oef1:
 
         W = simplify(W)
 
-        return(W)
+        pprint(W)
 
     @staticmethod
     def t_deel2(b):
