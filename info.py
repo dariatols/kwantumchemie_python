@@ -826,7 +826,6 @@ class wc3_oef2:
         # dit omdat een normale bindingslengte tussen C-C 2.91 bohr bedraagt
 
         al, be = sp.symbols(r'\alpha \beta')
-        print(a_pos)
 
         for r, k in zip(a_pos[0], a_pos[1]):
             huckel[r, k] = al
@@ -834,7 +833,7 @@ class wc3_oef2:
         for r, k in zip(b_pos[0], b_pos[1]):
             huckel[r, k] = be
 
-        print(huckel)
+        pprint(huckel)
 
     @staticmethod
     def t_deel4(b):
@@ -861,7 +860,6 @@ class wc3_oef2:
         # dit omdat een normale bindingslengte tussen C-C 2.91 bohr bedraagt
 
         al, be = sp.symbols(r'\alpha \beta')
-        print(a_pos)
 
         for r, k in zip(a_pos[0], a_pos[1]):
             huckel[r, k] = al
@@ -898,7 +896,6 @@ class wc3_oef2:
         # dit omdat een normale bindingslengte tussen C-C 2.91 bohr bedraagt
 
         al, be = sp.symbols(r'\alpha \beta')
-        print(a_pos)
 
         for r, k in zip(a_pos[0], a_pos[1]):
             huckel[r, k] = al
@@ -908,10 +905,6 @@ class wc3_oef2:
 
         v, w = huckel.diagonalize()
         v = np.array(v)  # .astype(np.float64)
-
-        x, y = coord[:, 0], coord[:, 1]
-        xx, yy = np.meshgrid(x, y)
-        eigv = np.diag(v[:, 0])
 
         fig, axes = plt.subplots(3, 2, sharex='col', sharey='row', figsize=(6, 6))
 
