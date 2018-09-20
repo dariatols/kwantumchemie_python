@@ -11,6 +11,12 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 import sympy as sp
 from matplotlib import cm
+from scipy import diag
+import subprocess
+import math
+import itertools
+from numpy import linalg as LA
+np.set_printoptions(suppress=True)
 
 class wc1_oef1:
     @staticmethod
@@ -923,4 +929,170 @@ class wc3_oef2:
 
         fig.show()
 
+class wc4_oef1:
 
+    @staticmethod
+    # tel de lijnen in een gegeven bestand om de dimensie te bepalen
+    def file_len(fname):
+        p = subprocess.Popen(['wc', '-l', fname], stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+        result, err = p.communicate()
+        if p.returncode != 0:
+            raise IOError(err)
+        return int(result.strip().split()[0]) + 1
+
+    @staticmethod
+    def t_deel4(b):
+        print('Tip:')
+        print('Gebruik np.linalg.eigh(...) om de eigenwaarden en eigenvectoren ',
+              'van de overlapmatrix S te vinden. Deze heb je nodig om de orthogonalisatiematrix ',
+              'op te stellen.')
+
+    @staticmethod
+    def a_deel4(b):
+        print('Antwoord:')
+        count_lines = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
+        n = int((-1 + math.sqrt(1 + 8 * (count_lines))) / 2)
+
+        def generate_matrix(filename):
+            matrix = np.zeros((n, n))
+            with open(filename, 'r') as file:
+                for line in file:
+                    line = list(map(float, line.rstrip().split()))
+                    i, j, s = line[0], line[1], line[2]
+                    matrix[int(i - 1)][int(j - 1)] = s
+            return np.triu(matrix.T, 1) + matrix
+
+        overlap = generate_matrix('data_HF_SCF/overlap.dat')
+
+        eigvalues, eigvectors = LA.eigh(overlap)
+        diag_matrix = diag(eigvalues)
+        S_12 = eigvectors @ np.sqrt(LA.inv(diag_matrix)) @ eigvectors.T
+        print(S_12)
+
+    @staticmethod
+    def t_deel5(b):
+        print('Tip:')
+        print('Gebruik hier ook np.linalg.eigh(...). Voor de sommatie over de ',
+              'bezette atoomorbitalen gebruik je np.einsum(...).')
+
+    @staticmethod
+    def a_deel5(b):
+        print('Antwoord:')
+        count_lines = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
+        n = int((-1 + math.sqrt(1 + 8 * (count_lines))) / 2)
+
+        def generate_matrix(filename):
+            matrix = np.zeros((n, n))
+            with open(filename, 'r') as file:
+                for line in file:
+                    line = list(map(float, line.rstrip().split()))
+                    i, j, s = line[0], line[1], line[2]
+                    matrix[int(i - 1)][int(j - 1)] = s
+            return np.triu(matrix.T, 1) + matrix
+
+        overlap = generate_matrix('data_HF_SCF/overlap.dat')
+        T = generate_matrix('data_HF_SCF/kinetic.dat')
+        V = generate_matrix('data_HF_SCF/nucl_attr.dat')
+        core_H = T + V
+
+        eigvalues, eigvectors = LA.eigh(overlap)
+        diag_matrix = diag(eigvalues)
+        S_12 = eigvectors @ np.sqrt(LA.inv(diag_matrix)) @ eigvectors.T
+
+        f0 = S_12.T @ core_H @ S_12
+
+        def density(fock_orth):
+            f_eigvalues, f_eigvectors = LA.eigh(fock_orth)
+            coeff = S_12 @ f_eigvectors
+
+            coeff_r = coeff[:, 0:5]
+            return np.einsum('ij,kj->ik', coeff_r, coeff_r)
+
+        dens = density(f0)
+        print(dens)
+
+    @staticmethod
+    def t_deel6(b):
+        print('Tip:')
+        print('De elektronische energiematrix bereken je door: 2*densiteitsmatrix*core_H. ',
+              'Al deze elementen sommeer je om tot de elektronische energie te komen.')
+
+    @staticmethod
+    def a_deel6(b):
+        print('Antwoord:')
+        with open('data_HF_SCF/enuc.dat', 'r') as file:
+            e_nucl = float(file.readline().rstrip())
+
+        count_lines = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
+        n = int((-1 + math.sqrt(1 + 8 * (count_lines))) / 2)
+
+        def generate_matrix(filename):
+            matrix = np.zeros((n, n))
+            with open(filename, 'r') as file:
+                for line in file:
+                    line = list(map(float, line.rstrip().split()))
+                    i, j, s = line[0], line[1], line[2]
+                    matrix[int(i - 1)][int(j - 1)] = s
+            return np.triu(matrix.T, 1) + matrix
+
+        overlap = generate_matrix('data_HF_SCF/overlap.dat')
+        T = generate_matrix('data_HF_SCF/kinetic.dat')
+        V = generate_matrix('data_HF_SCF/nucl_attr.dat')
+        core_H = T + V
+
+        def permutations(mu, nu, lamb, sigma):
+            perm_munu = set(itertools.permutations([mu, nu], 2))
+            perm_lamsi = set(itertools.permutations([lamb, sigma], 2))
+            return set(itertools.chain(set(itertools.product(perm_munu, perm_lamsi)),
+                                       set(itertools.product(perm_lamsi, perm_munu))))
+
+        eri = np.zeros((n, n, n, n))
+        with open('data_HF_SCF/eri.dat', 'r') as file:
+            for line in file:
+                line = line.rstrip().split()
+                mu, nu, lamb, sigma = int(line[0]) - 1, int(line[1]) - 1, int(line[2]) - 1, int(line[3]) - 1
+                value = float(line[4])
+
+                perms = permutations(mu, nu, lamb, sigma)
+                for perm in perms:
+                    i, j, k, l = perm[0][0], perm[0][1], perm[1][0], perm[1][1]
+                    eri[i][j][k][l] = value
+
+        eigvalues, eigvectors = LA.eigh(overlap)
+        diag_matrix = diag(eigvalues)
+        S_12 = eigvectors @ np.sqrt(LA.inv(diag_matrix)) @ eigvectors.T
+
+        f0 = S_12.T @ core_H @ S_12
+
+        def density(fock_orth):
+            f_eigvalues, f_eigvectors = LA.eigh(fock_orth)
+            coeff = S_12 @ f_eigvectors
+
+            coeff_r = coeff[:, 0:5]
+            return np.einsum('ij,kj->ik', coeff_r, coeff_r)
+
+        dens = density(f0)
+
+        e_el = np.sum(dens * 2 * core_H)
+        e_tot = e_el + e_nucl
+        print(e_tot)
+
+    @staticmethod
+    def t_deel7(b):
+        print('Tip:')
+        print('Hier moet je de eri-matrix transponeren met np.transpose(...). Ook ',
+              'is het gebruikelijk om hier np.einsum(...) te gebruiken.')
+
+    @staticmethod
+    def a_deel7(b):
+        print('Antwoord:')
+
+    @staticmethod
+    def t_deel11(b):
+        print('Tip:')
+        print('')
+
+    @staticmethod
+    def a_deel11(b):
+        print('Antwoord:')
