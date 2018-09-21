@@ -795,8 +795,6 @@ class wc4_oef1:
 
     @staticmethod
     def geef_overlap():
-        n = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
-
         def generate_matrix(filename):
             matrix = np.zeros((7, 7))
             with open(filename, 'r') as file:
@@ -812,8 +810,6 @@ class wc4_oef1:
 
     @staticmethod
     def geef_twee_elektron():
-        n = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
-
         def permutations(mu, nu, lamb, sigma):
             perm_munu = set(itertools.permutations([mu, nu], 2))
             perm_lamsi = set(itertools.permutations([lamb, sigma], 2))
