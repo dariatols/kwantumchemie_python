@@ -22,25 +22,27 @@ class wc1_oef1:
     @staticmethod
     def t_deel1(b):
         print('Tip:')
+        print('Gebruik hiervoor np.arange(...) of np.linspace(...)')
+
+
+    @staticmethod
+    def a_deel1(b):
+        print('Antwoord:')
+        x = np.linspace(0, 10, 1000)
+        print(x)
+
+
+    @staticmethod
+    def t_deel2(b):
+        print('Tip:')
         print('Maak een functie die enkel het sinusgedeelte',
               'van de golfvergelijking teruggeeft. Hierbij maak je gebruik',
               'van numpy.sin(...) en numpy.pi.')
 
     @staticmethod
-    def a_deel1(b):
-        print('Antwoord:')
-        print('De functie geeft np.sin( (n*np.pi*x)/l ) terug.')
-
-    @staticmethod
-    def t_deel2(b):
-        print('Tip:')
-        print('Gebruik hiervoor np.arange(...) of np.linspace(...)')
-
-    @staticmethod
     def a_deel2(b):
         print('Antwoord:')
-        x = np.linspace(0, 10, 1000)
-        print(x)
+        print('De functie geeft np.sin( (n*np.pi*x)/l ) terug.')
 
     @staticmethod
     def t_deel3(b):
@@ -549,45 +551,9 @@ class wc2_oef2:
 class wc3_oef1:
 
     @staticmethod
-    def t_deel1(b):
-        print('Tip:')
-        print('Gebruik SymPy om de variationele integraal W op te stellen.',
-              'Maak eerst de nodige symbolen aan, waarna je de integraal opstelt.',
-              'Gebruik sympy.subs om de integraal te vereenvoudigen met de notaties ',
-              'Haa, Hbb, Hab, Saa, Sbb, Sab.')
-
-    @staticmethod
-    def a_deel1(b):
-        print('Antwoord:')
-        H = Operator('\hat{H}')
-        one = Operator('\hat{1}')
-        ca, cb = symbols('c_A c_B')
-        phi_a, phi_b = symbols('\phi_A \phi_B', constant=True)
-        HAA, HBB, HAB, S = symbols('H_{AA} H_{BB} H_{AB} S')
-
-        W = ((ca * Bra(phi_a) + cb * Bra(phi_b)) * H * \
-             (ca * Ket(phi_a) + cb * Ket(phi_b))) / \
-            ((ca * Bra(phi_a) + cb * Bra(phi_b)) * one * \
-             (ca * Ket(phi_a) + cb * Ket(phi_b)))
-
-        W = expand(W)
-
-        W = W.subs(Bra(phi_a) * H * Ket(phi_a), HAA) \
-            .subs(Bra(phi_a) * H * Ket(phi_b), HAB) \
-            .subs(Bra(phi_b) * H * Ket(phi_a), HAB) \
-            .subs(Bra(phi_b) * H * Ket(phi_b), HBB) \
-            .subs(Bra(phi_a) * one * Ket(phi_a), 1) \
-            .subs(Bra(phi_a) * one * Ket(phi_b), S) \
-            .subs(Bra(phi_b) * one * Ket(phi_a), S) \
-            .subs(Bra(phi_b) * one * Ket(phi_b), 1)
-
-        W = simplify(W)
-        pprint(W)
-
-    @staticmethod
     def t_deel2(b):
         print('Tip:')
-        print('Leid W eens af naar c_A en eens naar c_B en stel beide afgeleiden ',
+        print('Leid W eens af naar c_A en eens naar c_B (gebruik diff(...)) en stel beide afgeleiden ',
               '= 0. Zet beide vergelijkingen om in matrixvorm met sympy.linear_eq_to_matrix(...)',
               'en los het eigenwaardeprobleem op met sympy.solve(...). Vergeet niet dat Haa en ',
               'Hbb hetzelfde zijn, substitueer Hbb dus door Haa.')
@@ -630,7 +596,6 @@ class wc3_oef1:
         t_dcb, _ = fraction(dcb)
 
         A, b = linear_eq_to_matrix((expand(t_dca), expand(t_dcb)), ca, cb)
-        # A, b = linear_eq_to_matrix((t_dca, t_dcb), ca, cb)
         A = A.subs(HBB, HAA)
 
         E1, E2 = solve(A.det(), E)
@@ -639,134 +604,6 @@ class wc3_oef1:
         pprint(E1)
         print('E2: ')
         pprint(E2)
-
-    @staticmethod
-    def t_deel3(b):
-        print('Tip:')
-        print('Maak hier weer gebruik van sympy.solve(...) om de coefficienten ',
-              'te berekenen.')
-
-    @staticmethod
-    def a_deel3(b):
-        print('Antwoord:')
-        H = Operator('\hat{H}')
-        one = Operator('\hat{1}')
-        ca, cb = symbols('c_A c_B')
-        phi_a, phi_b = symbols('\phi_A \phi_B', constant=True)
-        HAA, HBB, HAB, S = symbols('H_{AA} H_{BB} H_{AB} S')
-
-        W = ((ca * Bra(phi_a) + cb * Bra(phi_b)) * H * \
-             (ca * Ket(phi_a) + cb * Ket(phi_b))) / \
-            ((ca * Bra(phi_a) + cb * Bra(phi_b)) * one * \
-             (ca * Ket(phi_a) + cb * Ket(phi_b)))
-
-        W = expand(W)
-
-        W = W.subs(Bra(phi_a) * H * Ket(phi_a), HAA) \
-            .subs(Bra(phi_a) * H * Ket(phi_b), HAB) \
-            .subs(Bra(phi_b) * H * Ket(phi_a), HAB) \
-            .subs(Bra(phi_b) * H * Ket(phi_b), HBB) \
-            .subs(Bra(phi_a) * one * Ket(phi_a), 1) \
-            .subs(Bra(phi_a) * one * Ket(phi_b), S) \
-            .subs(Bra(phi_b) * one * Ket(phi_a), S) \
-            .subs(Bra(phi_b) * one * Ket(phi_b), 1)
-
-        W = simplify(W)
-
-        dca = diff(W, ca)
-        dcb = diff(W, cb)
-
-        E = Symbol('E')
-        dca = simplify(dca.subs(W, E))
-        dcb = simplify(dcb.subs(W, E))
-
-        t_dca, _ = fraction(dca)
-        t_dcb, _ = fraction(dcb)
-
-        A, b = linear_eq_to_matrix((expand(t_dca), expand(t_dcb)), ca, cb)
-        # A, b = linear_eq_to_matrix((t_dca, t_dcb), ca, cb)
-        A = A.subs(HBB, HAA)
-
-        E1, E2 = solve(A.det(), E)
-
-        x = Matrix([ca, cb])
-        b = (A * x).subs(E, E1)
-        c1 = solve(b, ca, cb)  # dictionary
-
-        b = (A * x).subs(E, E2)
-        c2 = solve(b, ca, cb)  # dictionary
-
-        _, N = fraction(W)
-
-        # c1: ca = -cb
-        a = N.subs(ca, c1[ca])
-        cb1 = solve(a - 1, cb)
-
-        # c2: ca = cb
-        a = N.subs(ca, c2[ca])
-        cb2 = solve(a - 1, cb)
-
-        print('Mogelijke c_b coefficienten horende bij E1 (c_a=-c_b: ')
-        pprint(cb1)
-        print('Mogelijke c_b coefficienten horende bij E2 (c_a=c_b): ')
-        pprint(cb2)
-
-    @staticmethod
-    def t_deel4(b):
-        print('Tip:')
-        print('Gebruik dezelfde variationele integraal W als in deelvraag 1. ',
-              'Maak een meshgrid met np.meshgrid(...). Maak een functie '
-              'die de waarde W berekent op elk punt in het 2D-grid.')
-
-    @staticmethod
-    def a_deel4(b):
-        print('Antwoord:')
-        H = Operator('\hat{H}')
-        one = Operator('\hat{1}')
-        ca, cb = symbols('c_A c_B')
-        phi_a, phi_b = symbols('\phi_A \phi_B', constant=True)
-        HAA, HBB, HAB, S = symbols('H_{AA} H_{BB} H_{AB} S')
-
-        W = ((ca * Bra(phi_a) + cb * Bra(phi_b)) * H * \
-             (ca * Ket(phi_a) + cb * Ket(phi_b))) / \
-            ((ca * Bra(phi_a) + cb * Bra(phi_b)) * one * \
-             (ca * Ket(phi_a) + cb * Ket(phi_b)))
-
-        W = expand(W)
-
-        W = W.subs(Bra(phi_a) * H * Ket(phi_a), HAA) \
-            .subs(Bra(phi_a) * H * Ket(phi_b), HAB) \
-            .subs(Bra(phi_b) * H * Ket(phi_a), HAB) \
-            .subs(Bra(phi_b) * H * Ket(phi_b), HBB) \
-            .subs(Bra(phi_a) * one * Ket(phi_a), 1) \
-            .subs(Bra(phi_a) * one * Ket(phi_b), S) \
-            .subs(Bra(phi_b) * one * Ket(phi_a), S) \
-            .subs(Bra(phi_b) * one * Ket(phi_b), 1)
-
-        W = simplify(W)
-
-        # W.evalf( subs={HAA: 1, HBB: 1, S: .5, ca: 3, cb: 6} )
-        a, b = np.linspace(-1, 1, 1000), np.linspace(-1, 1, 1000)
-        aa, bb = np.meshgrid(a, b)
-
-        f = lambdify((HAA, HBB, HAB, S, ca, cb), W)
-        grid = f(1, 1, -2, .5, aa, bb)
-
-        coeff = np.where(grid == np.amin(grid))
-
-        i = (coeff[0][0], coeff[1][0])
-
-        print('c_a = ', a[i[0]])
-        print('c_b = ', b[i[1]])
-        print('De coefficienten horende bij de laagste energie zijn dus hetzelfde ',
-              'en hebben hetzelfde teken. Deze waarnemingen kloppen met de theoretische ',
-              'afleiding uit vraag 3.')
-
-        fig = plt.figure()
-        ax = fig.gca(projection='3d')
-
-        ax.plot_surface(aa, bb, grid, cmap=cm.coolwarm)
-        fig.show()
 
 class wc3_oef2:
 
@@ -942,90 +779,34 @@ class wc4_oef1:
         return int(result.strip().split()[0]) + 1
 
     @staticmethod
-    def t_deel4(b):
-        print('Tip:')
-        print('Gebruik np.linalg.eigh(...) om de eigenwaarden en eigenvectoren ',
-              'van de overlapmatrix S te vinden. Deze heb je nodig om de orthogonalisatiematrix ',
-              'op te stellen.')
-
-    @staticmethod
-    def a_deel4(b):
-        print('Antwoord:')
-        count_lines = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
-        n = int((-1 + math.sqrt(1 + 8 * (count_lines))) / 2)
-
-        def generate_matrix(filename):
-            matrix = np.zeros((n, n))
-            with open(filename, 'r') as file:
-                for line in file:
-                    line = list(map(float, line.rstrip().split()))
-                    i, j, s = line[0], line[1], line[2]
-                    matrix[int(i - 1)][int(j - 1)] = s
-            return np.triu(matrix.T, 1) + matrix
-
-        overlap = generate_matrix('data_HF_SCF/overlap.dat')
-
-        eigvalues, eigvectors = LA.eigh(overlap)
-        diag_matrix = diag(eigvalues)
-        S_12 = eigvectors @ np.sqrt(LA.inv(diag_matrix)) @ eigvectors.T
-        print(S_12)
-
-    @staticmethod
-    def t_deel5(b):
-        print('Tip:')
-        print('Gebruik hier ook np.linalg.eigh(...). Voor de sommatie over de ',
-              'bezette atoomorbitalen gebruik je np.einsum(...).')
-
-    @staticmethod
-    def a_deel5(b):
-        print('Antwoord:')
-        count_lines = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
-        n = int((-1 + math.sqrt(1 + 8 * (count_lines))) / 2)
-
-        def generate_matrix(filename):
-            matrix = np.zeros((n, n))
-            with open(filename, 'r') as file:
-                for line in file:
-                    line = list(map(float, line.rstrip().split()))
-                    i, j, s = line[0], line[1], line[2]
-                    matrix[int(i - 1)][int(j - 1)] = s
-            return np.triu(matrix.T, 1) + matrix
-
-        overlap = generate_matrix('data_HF_SCF/overlap.dat')
-        T = generate_matrix('data_HF_SCF/kinetic.dat')
-        V = generate_matrix('data_HF_SCF/nucl_attr.dat')
-        core_H = T + V
-
-        eigvalues, eigvectors = LA.eigh(overlap)
-        diag_matrix = diag(eigvalues)
-        S_12 = eigvectors @ np.sqrt(LA.inv(diag_matrix)) @ eigvectors.T
-
-        f0 = S_12.T @ core_H @ S_12
-
-        def density(fock_orth):
-            f_eigvalues, f_eigvectors = LA.eigh(fock_orth)
-            coeff = S_12 @ f_eigvectors
-
-            coeff_r = coeff[:, 0:5]
-            return np.einsum('ij,kj->ik', coeff_r, coeff_r)
-
-        dens = density(f0)
-        print(dens)
-
-    @staticmethod
-    def t_deel6(b):
-        print('Tip:')
-        print('De elektronische energiematrix bereken je door: 2*densiteitsmatrix*core_H. ',
-              'Al deze elementen sommeer je om tot de elektronische energie te komen.')
-
-    @staticmethod
-    def a_deel6(b):
-        print('Antwoord:')
+    def geef_nuclrep():
         with open('data_HF_SCF/enuc.dat', 'r') as file:
             e_nucl = float(file.readline().rstrip())
 
-        count_lines = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
-        n = int((-1 + math.sqrt(1 + 8 * (count_lines))) / 2)
+        return e_nucl
+
+    @staticmethod
+    def geef_coreH():
+        n = wc4_oef1.file_len('data_HF_SCF/kinetic.dat')
+
+        def generate_matrix(filename):
+            matrix = np.zeros((n, n))
+            with open(filename, 'r') as file:
+                for line in file:
+                    line = list(map(float, line.rstrip().split()))
+                    i, j, s = line[0], line[1], line[2]
+                    matrix[int(i - 1)][int(j - 1)] = s
+            return np.triu(matrix.T, 1) + matrix
+
+        T = generate_matrix('data_HF_SCF/kinetic.dat')
+        V = generate_matrix('data_HF_SCF/nucl_attr.dat')
+        core_H = T + V
+
+        return core_H
+
+    @staticmethod
+    def geef_overlap():
+        n = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
 
         def generate_matrix(filename):
             matrix = np.zeros((n, n))
@@ -1037,9 +818,12 @@ class wc4_oef1:
             return np.triu(matrix.T, 1) + matrix
 
         overlap = generate_matrix('data_HF_SCF/overlap.dat')
-        T = generate_matrix('data_HF_SCF/kinetic.dat')
-        V = generate_matrix('data_HF_SCF/nucl_attr.dat')
-        core_H = T + V
+
+        return overlap
+
+    @staticmethod
+    def geef_twee_elektron():
+        n = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
 
         def permutations(mu, nu, lamb, sigma):
             perm_munu = set(itertools.permutations([mu, nu], 2))
@@ -1059,40 +843,4 @@ class wc4_oef1:
                     i, j, k, l = perm[0][0], perm[0][1], perm[1][0], perm[1][1]
                     eri[i][j][k][l] = value
 
-        eigvalues, eigvectors = LA.eigh(overlap)
-        diag_matrix = diag(eigvalues)
-        S_12 = eigvectors @ np.sqrt(LA.inv(diag_matrix)) @ eigvectors.T
-
-        f0 = S_12.T @ core_H @ S_12
-
-        def density(fock_orth):
-            f_eigvalues, f_eigvectors = LA.eigh(fock_orth)
-            coeff = S_12 @ f_eigvectors
-
-            coeff_r = coeff[:, 0:5]
-            return np.einsum('ij,kj->ik', coeff_r, coeff_r)
-
-        dens = density(f0)
-
-        e_el = np.sum(dens * 2 * core_H)
-        e_tot = e_el + e_nucl
-        print(e_tot)
-
-    @staticmethod
-    def t_deel7(b):
-        print('Tip:')
-        print('Hier moet je de eri-matrix transponeren met np.transpose(...). Ook ',
-              'is het gebruikelijk om hier np.einsum(...) te gebruiken.')
-
-    @staticmethod
-    def a_deel7(b):
-        print('Antwoord:')
-
-    @staticmethod
-    def t_deel11(b):
-        print('Tip:')
-        print('')
-
-    @staticmethod
-    def a_deel11(b):
-        print('Antwoord:')
+        return eri
