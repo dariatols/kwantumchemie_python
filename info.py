@@ -787,7 +787,7 @@ class wc4_oef1:
 
     @staticmethod
     def geef_coreH():
-        n = wc4_oef1.file_len('data_HF_SCF/kinetic.dat')
+        n = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
 
         def generate_matrix(filename):
             matrix = np.zeros((n, n))
