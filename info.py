@@ -769,16 +769,6 @@ class wc3_oef2:
 class wc4_oef1:
 
     @staticmethod
-    # tel de lijnen in een gegeven bestand om de dimensie te bepalen
-    def file_len(fname):
-        p = subprocess.Popen(['wc', '-l', fname], stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
-        result, err = p.communicate()
-        if p.returncode != 0:
-            raise IOError(err)
-        return int(result.strip().split()[0]) + 1
-
-    @staticmethod
     def geef_nuclrep():
         with open('data_HF_SCF/enuc.dat', 'r') as file:
             e_nucl = float(file.readline().rstrip())
@@ -787,10 +777,9 @@ class wc4_oef1:
 
     @staticmethod
     def geef_coreH():
-        n = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
 
         def generate_matrix(filename):
-            matrix = np.zeros((n, n))
+            matrix = np.zeros((7, 7))
             with open(filename, 'r') as file:
                 for line in file:
                     line = list(map(float, line.rstrip().split()))
@@ -809,7 +798,7 @@ class wc4_oef1:
         n = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
 
         def generate_matrix(filename):
-            matrix = np.zeros((n, n))
+            matrix = np.zeros((7, 7))
             with open(filename, 'r') as file:
                 for line in file:
                     line = list(map(float, line.rstrip().split()))
@@ -831,7 +820,7 @@ class wc4_oef1:
             return set(itertools.chain(set(itertools.product(perm_munu, perm_lamsi)),
                                        set(itertools.product(perm_lamsi, perm_munu))))
 
-        eri = np.zeros((n, n, n, n))
+        eri = np.zeros((7, 7, 7, 7))
         with open('data_HF_SCF/eri.dat', 'r') as file:
             for line in file:
                 line = line.rstrip().split()
