@@ -831,7 +831,7 @@ class hf:
         return eri
 
     @staticmethod
-    def t_deel4():
+    def t_deel4(b):
         print('Tip:')
         print('Gebruik np.linalg.eigh(...) om de eigenwaarden en eigenvectoren ',
               'van de overlapmatrix S te vinden. Deze heb je nodig om de orthogonalisatiematrix ',
@@ -839,65 +839,58 @@ class hf:
 
     def a_deel4(b):
         print('Antwoord:')
-        n = 7
-
-        def generate_matrix(filename):
-            matrix = np.zeros((n, n))
-            with open(filename, 'r') as file:
-                for line in file:
-                    line = list(map(float, line.rstrip().split()))
-                    i, j, s = line[0], line[1], line[2]
-                    matrix[int(i - 1)][int(j - 1)] = s
-            return np.triu(matrix.T, 1) + matrix
-
-        overlap = generate_matrix('data_HF_SCF/overlap.dat')
-
-        eigvalues, eigvectors = LA.eigh(overlap)
-        diag_matrix = diag(eigvalues)
-        S_12 = eigvectors @ np.sqrt(LA.inv(diag_matrix)) @ eigvectors.T
-        print(S_12)
+        print(np.array([[ 1.02363458e+00, -1.36854681e-01,  3.05261738e-17,
+        -7.48725613e-03, -2.01062820e-32,  1.90278865e-02,
+         1.90278865e-02],
+       [-1.36854681e-01,  1.15786320e+00, -3.50172961e-16,
+         7.21600680e-02,  2.05358211e-32, -2.22332556e-01,
+        -2.22332556e-01],
+       [ 3.05261738e-17, -3.50172961e-16,  1.07331475e+00,
+        -2.78794676e-17,  4.38379236e-17, -1.75758305e-01,
+         1.75758305e-01],
+       [-7.48725613e-03,  7.21600680e-02, -2.78794676e-17,
+         1.03830505e+00,  8.18575439e-32, -1.18462559e-01,
+        -1.18462559e-01],
+       [-2.01062820e-32,  2.05358211e-32,  4.38379236e-17,
+         8.18575439e-32,  1.00000000e+00, -3.88492255e-17,
+         3.88492255e-17],
+       [ 1.90278865e-02, -2.22332556e-01, -1.75758305e-01,
+        -1.18462559e-01, -3.88492255e-17,  1.12972342e+00,
+        -6.25975108e-02],
+       [ 1.90278865e-02, -2.22332556e-01,  1.75758305e-01,
+        -1.18462559e-01,  3.88492255e-17, -6.25975108e-02,
+         1.12972342e+00]]))
 
     @staticmethod
     def t_deel5(b):
         print('Tip:')
         print('Gebruik hier ook np.linalg.eigh(...). Voor de sommatie over de ',
-              'bezette atoomorbitalen gebruik je np.einsum(...).')
+              'bezette atoomorbitalen kan je gebruik maken van for-loops. Een efficientere methode is echter np.einsum(...).')
 
     @staticmethod
     def a_deel5(b):
         print('Antwoord:')
-        count_lines = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
-        n = int((-1 + math.sqrt(1 + 8 * (count_lines))) / 2)
-
-        def generate_matrix(filename):
-            matrix = np.zeros((n, n))
-            with open(filename, 'r') as file:
-                for line in file:
-                    line = list(map(float, line.rstrip().split()))
-                    i, j, s = line[0], line[1], line[2]
-                    matrix[int(i - 1)][int(j - 1)] = s
-            return np.triu(matrix.T, 1) + matrix
-
-        overlap = generate_matrix('data_HF_SCF/overlap.dat')
-        T = generate_matrix('data_HF_SCF/kinetic.dat')
-        V = generate_matrix('data_HF_SCF/nucl_attr.dat')
-        core_H = T + V
-
-        eigvalues, eigvectors = LA.eigh(overlap)
-        diag_matrix = diag(eigvalues)
-        S_12 = eigvectors @ np.sqrt(LA.inv(diag_matrix)) @ eigvectors.T
-
-        f0 = S_12.T @ core_H @ S_12
-
-        def density(fock_orth):
-            f_eigvalues, f_eigvectors = LA.eigh(fock_orth)
-            coeff = S_12 @ f_eigvectors
-
-            coeff_r = coeff[:, 0:5]
-            return np.einsum('ij,kj->ik', coeff_r, coeff_r)
-
-        dens = density(f0)
-        print(dens)
+        print(np.array([[ 1.06501171e+00, -2.85216585e-01,  2.59847587e-16,
+        -1.95533697e-02, -1.12553467e-17,  3.34495598e-02,
+         3.34495598e-02],
+       [-2.85216585e-01,  1.24896570e+00, -1.49218416e-15,
+         1.13559387e-01,  1.08094328e-16, -1.44280932e-01,
+        -1.44280932e-01],
+       [ 2.59847587e-16, -1.49218416e-15,  1.12587006e+00,
+        -1.11607426e-16, -3.73086939e-16, -1.46131651e-01,
+         1.46131651e-01],
+       [-1.95533697e-02,  1.13559387e-01, -1.11607426e-16,
+         1.06606377e+00,  4.97010651e-17, -9.93583200e-02,
+        -9.93583200e-02],
+       [-1.12553467e-17,  1.08094328e-16, -3.73086939e-16,
+         4.97010651e-17,  1.00000000e+00,  1.18877646e-16,
+        -4.83314713e-16],
+       [ 3.34495598e-02, -1.44280932e-01, -1.46131651e-01,
+        -9.93583200e-02,  1.18877646e-16,  4.26801604e-02,
+         4.74601459e-03],
+       [ 3.34495598e-02, -1.44280932e-01,  1.46131651e-01,
+        -9.93583200e-02, -4.83314713e-16,  4.74601459e-03,
+         4.26801604e-02]]))
 
     @staticmethod
     def t_deel6(b):
@@ -908,78 +901,46 @@ class hf:
     @staticmethod
     def a_deel6(b):
         print('Antwoord:')
-        with open('data_HF_SCF/enuc.dat', 'r') as file:
-            e_nucl = float(file.readline().rstrip())
-
-        count_lines = wc4_oef1.file_len('data_HF_SCF/overlap.dat')
-        n = int((-1 + math.sqrt(1 + 8 * (count_lines))) / 2)
-
-        def generate_matrix(filename):
-            matrix = np.zeros((n, n))
-            with open(filename, 'r') as file:
-                for line in file:
-                    line = list(map(float, line.rstrip().split()))
-                    i, j, s = line[0], line[1], line[2]
-                    matrix[int(i - 1)][int(j - 1)] = s
-            return np.triu(matrix.T, 1) + matrix
-
-        overlap = generate_matrix('data_HF_SCF/overlap.dat')
-        T = generate_matrix('data_HF_SCF/kinetic.dat')
-        V = generate_matrix('data_HF_SCF/nucl_attr.dat')
-        core_H = T + V
-
-        def permutations(mu, nu, lamb, sigma):
-            perm_munu = set(itertools.permutations([mu, nu], 2))
-            perm_lamsi = set(itertools.permutations([lamb, sigma], 2))
-            return set(itertools.chain(set(itertools.product(perm_munu, perm_lamsi)),
-                                       set(itertools.product(perm_lamsi, perm_munu))))
-
-        eri = np.zeros((n, n, n, n))
-        with open('data_HF_SCF/eri.dat', 'r') as file:
-            for line in file:
-                line = line.rstrip().split()
-                mu, nu, lamb, sigma = int(line[0]) - 1, int(line[1]) - 1, int(line[2]) - 1, int(line[3]) - 1
-                value = float(line[4])
-
-                perms = permutations(mu, nu, lamb, sigma)
-                for perm in perms:
-                    i, j, k, l = perm[0][0], perm[0][1], perm[1][0], perm[1][1]
-                    eri[i][j][k][l] = value
-
-        eigvalues, eigvectors = LA.eigh(overlap)
-        diag_matrix = diag(eigvalues)
-        S_12 = eigvectors @ np.sqrt(LA.inv(diag_matrix)) @ eigvectors.T
-
-        f0 = S_12.T @ core_H @ S_12
-
-        def density(fock_orth):
-            f_eigvalues, f_eigvectors = LA.eigh(fock_orth)
-            coeff = S_12 @ f_eigvectors
-
-            coeff_r = coeff[:, 0:5]
-            return np.einsum('ij,kj->ik', coeff_r, coeff_r)
-
-        dens = density(f0)
-
-        e_el = np.sum(dens * 2 * core_H)
-        e_tot = e_el + e_nucl
-        print('De totale energie is: ', e_tot)
+        print('De totale energie is ', -117.83971037588846, ' hartree')
 
     @staticmethod
     def t_deel7(b):
         print('Tip:')
         print('Hier moet je de eri-matrix transponeren met np.transpose(...). Ook ',
-              'is het gebruikelijk om hier np.einsum(...) te gebruiken.')
+              'is het gebruikelijk om hier np.einsum(...) te gebruiken in plaats van for-loops.')
 
     @staticmethod
     def a_deel7(b):
         print('Antwoord:')
-
-    @staticmethod
-    def t_deel11(b):
-        print('Tip:')
-        print('')
+        print('E(elec) \n ==========')
+        print(np.array([-125.84207744, -78.28658328,  -84.04831625,  -82.71696596,  -82.98714076,
+  -82.93813319,  -82.94627108,  -82.94448678,  -82.94461725,  -82.9445035,
+  -82.94447893,  -82.94446163,  -82.9444542,   -82.94445045,  -82.94444866,
+  -82.9444478,   -82.94444738,  -82.94444718,  -82.94444708,  -82.94444703,
+  -82.94444701,  -82.944447]))
+        print('\n')
+        print('E(tot) \n ==========')
+        print(np.array([-117.83971038,  -70.28421622,  -76.04594919, -74.7145989,   -74.9847737,
+  -74.93576613,  -74.94390402,  -74.94211972,  -74.94225019,  -74.94213644,
+  -74.94211187,  -74.94209457,  -74.94208714, -74.94208338,  -74.9420816,
+  -74.94208073,  -74.94208032,  -74.94208012,  -74.94208002,  -74.94207997,
+  -74.94207995,  -74.94207994]) + 8.00236706181045)
+        print('\n')
+        print('delta(E) \n ==========')
+        print(np.array([ 47.55549415,  -5.76173297,   1.33135029,  -0.2701748,    0.04900757,
+                        -0.00813789,   0.00178429,  -0.00013047,   0.00011375,   0.00002457,
+                        0.0000173,    0.00000743,   0.00000375,   0.00000178,   0.00000087,
+                        0.00000042,   0.0000002,    0.0000001,    0.00000005,   0.00000002,
+                        0.00000001]))
 
     @staticmethod
     def a_deel11(b):
         print('Antwoord:')
+        energies = np.array([-117.83971038,  -70.28421622,  -76.04594919, -74.7145989,   -74.9847737,
+                            -74.93576613,  -74.94390402,  -74.94211972,  -74.94225019,  -74.94213644,
+                            -74.94211187,  -74.94209457,  -74.94208714, -74.94208338,  -74.9420816,
+                            -74.94208073,  -74.94208032,  -74.94208012,  -74.94208002,  -74.94207997,
+                            -74.94207995,  -74.94207994])
+        plt.plot(np.arange(0, len(energies), 1), np.array(energies) + 8.00236706181045, label='E_totaal')
+        plt.legend()
+        plt.show()
